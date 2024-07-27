@@ -1,30 +1,30 @@
-
-import { NextResponse } from "next/server";
-
+import { NextResponse } from 'next/server';
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request) {
-  let token = request.cookies.get("amh")?.value;
+  let token = request.cookies.get('sct')?.value;
 
   if (token) {
     const response = await fetch(`https://dummyjson.com/user/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then(response => response.json()).catch(error => error);
+    })
+      .then((response) => response.json())
+      .catch((error) => error);
     if (response?.id) {
       return NextResponse.next();
     } else {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(new URL('/login', request.url));
     }
   } else {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/checkout', "/cart", "/success", "/canceled"],
+  matcher: ['/checkout', '/cart', '/success', '/canceled'],
 };
 
 // import { cookies } from "next/headers";

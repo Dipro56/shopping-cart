@@ -18,8 +18,8 @@ function UserDropdown({
 
 
     const handleLogout = () => {
-        removeCookie("amh"); // Remove the token cookie
-        removeCookie("ramh"); // Remove the token cookie
+        removeCookie("sct"); // Remove the token cookie
+        removeCookie("rsct"); // Remove the token cookie
         notifications.success("You have been logged out")
         setopen(false)
         revalidate();

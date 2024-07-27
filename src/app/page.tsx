@@ -1,34 +1,35 @@
-import { Box, Flex, Select, Text, Grid } from "@radix-ui/themes";
-import apiServices from '../services/apiServices'
-import ProductCard from "@/components/products/ProductCard";
-
-
-
+import { Box, Flex, Select, Text, Grid } from '@radix-ui/themes';
+import ProductCard from '@/components/products/ProductCard';
+import productService from '@/services/productService';
 
 async function getProducts() {
-  let res = await apiServices.allProducts();
-  // console.log('res', res.products)
+  let res = await productService.getAllProduct();
   if (res?.products.length > 0) {
-    return res;
+    return res?.products;
   } else {
-    return { products: [] }; // Return an object with an empty products array
+    return { products: [] };
   }
 }
 
 const Home: React.FC = async () => {
-  let data = await getProducts();
-  // console.log('data', data)
+  let productList = await getProducts();
   return (
-    <Box mt="5" className='bg-slate-100 px-0 xl:px-24'>
-
-
-      <Grid className="gap-2" columns={{ xs: '2', sm: '3', md: '5' }} gap="4" mt="5" rows="auto" width="auto">
-        {data?.products?.length > 0 && data.products.map((item: Product) => (
-          <ProductCard key={item.id} product={item} />
-        ))}
+    <Box mt="5" className="bg-slate-100 px-0 xl:px-24">
+      <Grid
+        className="gap-2"
+        columns={{ xs: '2', sm: '3', md: '5' }}
+        gap="4"
+        mt="5"
+        rows="auto"
+        width="auto"
+      >
+        {productList?.length > 0 &&
+          productList?.map((item: Product) => (
+            <ProductCard key={item.id} product={item} />
+          ))}
       </Grid>
     </Box>
   );
-}
+};
 
 export default Home;

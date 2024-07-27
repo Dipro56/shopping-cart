@@ -4,8 +4,6 @@ import { Box, Button, Flex, TextField } from '@radix-ui/themes';
 
 import React, { useEffect, useState } from 'react';
 import { CiShoppingCart } from 'react-icons/ci';
-import { SiLootcrate } from 'react-icons/si';
-
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useUser } from '@/hooks/useUsers';
 import Image from 'next/image';
@@ -96,9 +94,7 @@ function Header() {
               }}
             >
               <div
-                className={`absolute top-[-20px] left-[20px] text-xl font-bold ${
-                  cartItems.length > 0 ? 'text-blue-800' : 'text-gray-400'
-                }`}
+                className={`bg-blue-800 rounded-full py-1 px-2 absolute top-[-12px] left-[12px] text-xs font-semibold text-white`}
               >
                 {cartItems.length}
               </div>

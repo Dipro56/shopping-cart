@@ -7,10 +7,11 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { CiStar } from 'react-icons/ci';
 import { FiMinus, FiPlus } from 'react-icons/fi';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CiShoppingCart } from 'react-icons/ci';
 import { IoMdStar } from 'react-icons/io';
 import Link from 'next/link';
+import { RootState } from '@/lib/store';
 
 interface ProductCardProps {
   product: Product;
@@ -18,6 +19,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   let { user } = useUser();
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
   const dispatch = useDispatch<AppDispatch>();
   const [quantity, setQuantity] = useState(1);
@@ -26,8 +28,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const totalPrice = discountedPrice * quantity;
 
   const incrementQuantity = () => {
-    if (quantity < product.stock) {
-      setQuantity(quantity + 1);
+    const cartItem = cartItems.filter((item) => item?.id == product.id);
+    console.log('cartItem', cartItem);
+    console.log('product', product);
+    if (cartItem?.length) {
+      console.log('check', cartItem[0]?.quantity + quantity);
+      if (cartItem[0]?.quantity + quantity < product.stock) {
+        setQuantity(quantity + 1);
+      } else {
+        notifications.error('Stock out!');
+      }
+    } else {
+      console.log('else');
+      if (quantity < product.stock) {
+        setQuantity(quantity + 1);
+      } else {
+        notifications.error('Stock out!');
+      }
     }
   };
 
@@ -39,25 +56,36 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleAddToCart = () => {
     if (user) {
-      console.log('Adding to cart:', {
-        id: product.id,
-        title: product.title,
-        price: discountedPrice,
-        quantity: quantity,
-        userId: user.id,
-      });
+      const cartItem = cartItems.filter((item) => item?.id == product.id);
 
-      dispatch(
-        addToCart({
-          id: product.id,
-          title: product.title,
-          price: discountedPrice,
-          quantity: quantity,
-          userId: user.id,
-        })
-      );
-
-      notifications.success('Product added successfully');
+      if (cartItem?.length) {
+        if (cartItem[0]?.quantity + quantity <= product.stock) {
+          dispatch(
+            addToCart({
+              id: product.id,
+              title: product.title,
+              price: discountedPrice,
+              quantity: quantity,
+              thumbnail: product.thumbnail,
+              userId: user.id,
+              stock: product.stock,
+            })
+          );
+          notifications.success('Product added successfully');
+        }
+      } else {
+        dispatch(
+          addToCart({
+            id: product.id,
+            title: product.title,
+            price: discountedPrice,
+            quantity: quantity,
+            thumbnail: product.thumbnail,
+            userId: user.id,
+            stock: product.stock,
+          })
+        );
+      }
     } else {
       notifications.error('Please login to add to cart');
     }
@@ -101,9 +129,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             ({product.rating.toFixed(1)})
           </span>
         </div>
-        <h1 className="text-xs  text-red-600">
-          Minimum order : {product?.minimumOrderQuantity}
-        </h1>
+
         <p className="text-xs text-blue-800 my-1  truncate">
           Total reviews {product?.reviews?.length}
         </p>
@@ -158,9 +184,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <span className="ml-1 text-sm"> Add to Cart</span>
         </button>
       </div>
-      {/* <div className="px-4 py-2 bg-gray-700">
-                <p className="text-sm text-gray-300 truncate">{product.description}</p>
-            </div> */}
     </div>
   );
 };

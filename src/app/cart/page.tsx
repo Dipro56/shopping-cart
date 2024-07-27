@@ -7,6 +7,7 @@ import {
   removeFromCart,
 } from '@/lib/slices/cartSlice';
 import { RootState } from '@/lib/store';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
@@ -14,10 +15,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 function Page() {
   const router = useRouter();
-
   let { user } = useUser();
   const dispatch = useDispatch();
-  // Assuming you have a user state
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
   useEffect(() => {
@@ -44,13 +43,12 @@ function Page() {
   };
 
   const handleCheckout = () => {
-    // Navigate to checkout page
     router.push('/checkout');
   };
 
   return (
     <div className="min-h-screen bg-gray-200 text-black py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl sm:text-4xl font-extrabold mb-6 sm:mb-8 text-center">
           Your Cart
         </h1>
@@ -60,58 +58,70 @@ function Page() {
           </p>
         ) : (
           <>
-            <div className="space-y-4 sm:space-y-6">
-              {cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-gray-800 rounded-lg shadow-lg overflow-hidden"
-                >
-                  <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between">
-                    <div className="flex-1 mb-4 sm:mb-0">
-                      <h2 className="text-lg sm:text-xl font-semibold text-black">
-                        {item.title}
-                      </h2>
-                      <p className="text-gray-400 mt-1">
-                        ${item.price.toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() =>
-                            handleDecrementQuantity(item.id, item?.userId)
-                          }
-                          className="text-gray-400 hover:text-gray-200 transition-colors p-1"
-                        >
-                          <FiMinus />
-                        </button>
-                        <span className="text-lg font-medium w-8 text-center">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            handleIncrementQuantity(item.id, item?.userId)
-                          }
-                          className="text-gray-400 hover:text-gray-200 transition-colors p-1"
-                        >
-                          <FiPlus />
-                        </button>
-                      </div>
-                      <p className="font-semibold text-lg w-24 text-left sm:text-right">
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+                <thead>
+                  <tr className="border-b border-gray-300">
+                    <th className="py-3 px-4 text-left text-blue-900">Image</th>
+                    <th className="py-3 px-4 text-left text-blue-900">Product</th>
+                    <th className="py-3 px-4 text-left text-blue-900">Price</th>
+                    <th className="py-3 px-4 text-left text-blue-900">Quantity</th>
+                    <th className="py-3 px-4 text-left text-blue-900">Total</th>
+                    <th className="py-3 px-4 text-left text-blue-900">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cartItems.map((item) => (
+                    <tr key={item.id} className="border-b border-gray-200">
+                      <td className="py-4 px-4">
+                        <Image
+                          src={item?.thumbnail}
+                          height={80}
+                          width={80}
+                          alt={'product image'}
+                          className="rounded-lg"
+                        />
+                      </td>
+                      <td className="py-4 px-4 text-gray-900">{item.title}</td>
+                      <td className="py-4 px-4 text-gray-600">${item.price.toFixed(2)}</td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() =>
+                              handleDecrementQuantity(item.id, item.userId)
+                            }
+                            className="bg-blue-900 text-white rounded-full p-1 hover:bg-blue-800"
+                          >
+                            <FiMinus />
+                          </button>
+                          <span className="text-lg font-medium">{item.quantity}</span>
+                          <button
+                            onClick={() =>
+                              handleIncrementQuantity(item.id, item.userId)
+                            }
+                            className="bg-blue-900 text-white rounded-full p-1 hover:bg-blue-800"
+                          >
+                            <FiPlus />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-gray-900">
                         ${(item.price * item.quantity).toFixed(2)}
-                      </p>
-                      <button
-                        onClick={() => handleRemoveItem(item.id, item.userId)}
-                        className="text-red-400 hover:text-red-300 transition-colors p-1"
-                      >
-                        <FiTrash2 size={20} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                      </td>
+                      <td className="py-4 px-4">
+                        <button
+                          onClick={() => handleRemoveItem(item.id, item.userId)}
+                          className="text-red-500 hover:text-red-400 transition-colors"
+                        >
+                          <FiTrash2 size={20} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="mt-8 sm:mt-12 bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
+            <div className="mt-8 sm:mt-12 bg-white rounded-lg shadow-lg p-4 sm:p-6">
               <div className="flex justify-between items-center mb-4 sm:mb-6">
                 <p className="text-xl sm:text-2xl font-bold">Total</p>
                 <p className="text-2xl sm:text-3xl font-extrabold">
@@ -120,7 +130,7 @@ function Page() {
               </div>
               <button
                 onClick={handleCheckout}
-                className="w-full bg-indigo-600 text-black py-3 px-4 rounded-lg text-lg font-semibold hover:bg-indigo-500 transition-colors duration-300 ease-in-out"
+                className="w-full bg-blue-900 text-white py-3 px-4 rounded-lg text-lg font-semibold hover:bg-blue-600 transition-colors duration-300 ease-in-out"
               >
                 Proceed to Checkout
               </button>

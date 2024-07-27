@@ -21,5 +21,8 @@ interface Product {
   thumbnail: string;
   sku: string;
   tags: string[];
-  minimumOrderQuantity:number
+  minimumOrderQuantity: number;
+  quantity: number;
+  shippingInformation: string;
+  returnPolicy: string;
 }
