@@ -5,18 +5,11 @@ import { IoMdStar } from 'react-icons/io';
 import { FaUserCircle } from 'react-icons/fa';
 import ProductDetails from '@/components/products/ProductDetails';
 
-// Define the type for the context parameter in getSingleProductDetails
 interface Context {
   params: any;
-  id: string;
+  id: number;
 }
 
-// Define the type for the props of the component
-interface ProductDetailsProps {
-  id: string;
-}
-
-// Your async function to fetch data based on context
 const getSingleProductDetails = async (context: Context) => {
   let porductId = context?.params?.id;
   let result = await productService.singleProductDetails(porductId);

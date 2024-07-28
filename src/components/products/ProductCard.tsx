@@ -1,6 +1,5 @@
 'use client';
 import { useUser } from '@/hooks/useUsers';
-import { AppDispatch } from '@/lib/store';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { CiStar } from 'react-icons/ci';
@@ -9,13 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CiShoppingCart } from 'react-icons/ci';
 import { IoMdStar } from 'react-icons/io';
 import Link from 'next/link';
-import { RootState } from '@/lib/store';
 import {
   handleProductAddToCart,
   handleProductDecrement,
   handleProductIncrement,
 } from '@/utils/helper/productHelper';
 import { addToCart } from '@/redux/features/cart/cartSlice';
+import { RootState, AppDispatch } from '../../redux/store';
 
 interface ProductCardProps {
   product: Product;
