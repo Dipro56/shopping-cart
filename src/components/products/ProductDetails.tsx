@@ -4,7 +4,7 @@ import { IoMdStar } from 'react-icons/io';
 import { FiMinus, FiPlus } from 'react-icons/fi';
 import { CiShoppingCart } from 'react-icons/ci';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '@/lib/store';
+
 import { useUser } from '@/hooks/useUsers';
 
 import {
@@ -13,7 +13,7 @@ import {
   handleProductIncrement,
 } from '@/utils/helper/productHelper';
 import { addToCart } from '@/redux/features/cart/cartSlice';
-import { RootState } from '../../redux/store';
+import { RootState, AppDispatch } from '../../redux/store';
 
 interface ProductCardProps {
   productDetails: Product;

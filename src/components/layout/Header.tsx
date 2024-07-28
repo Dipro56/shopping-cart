@@ -9,11 +9,11 @@ import { useUser } from '@/hooks/useUsers';
 import Image from 'next/image';
 import UserDropdown from './UserDropdown';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/lib/store';
-import { getUserCartData } from '@/lib/slices/cartSlice';
-import { useThrottle } from '@/hooks/useThrottle';
+import { useThrottle } from '@/hooks/useThrottle'
 
 import Link from 'next/link';
+import { getUserCartData } from '@/redux/features/cart/cartSlice';
+import { RootState } from '../../redux/store';
 
 const notHeaderRoute = [
   '/login',
