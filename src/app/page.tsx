@@ -1,6 +1,8 @@
 import { Box, Flex, Select, Text, Grid } from '@radix-ui/themes';
 import ProductCard from '@/components/products/ProductCard';
 import productService from '@/services/productService';
+import ProductSkeleton from '@/components/skeleton/ProductSkeleton';
+
 
 async function getProducts() {
   let res = await productService.getAllProduct();

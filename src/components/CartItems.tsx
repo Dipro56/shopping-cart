@@ -1,21 +1,14 @@
 'use client';
 import { useUser } from '@/hooks/useUsers';
 import notifications from '@/lib/notification';
-import { getUserCartData } from '@/lib/slices/cartSlice';
-import { RootState } from '@/lib/store';
 import getStripe from '@/lib/stripe/stripe';
+import { getUserCartData } from '@/redux/features/cart/cartSlice';
 import { Button, Spinner } from '@radix-ui/themes';
-import { useElements, useStripe } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
-// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY);
 function CartItems() {
-  // const stripe = useStripe();
-  // const elements = useElements();
-  // const [error, setError] = useState<string | null>(null);
-  // const [processing, setProcessing] = useState(false);
   let { user } = useUser();
   const dispatch = useDispatch();
 
@@ -59,7 +52,7 @@ function CartItems() {
   };
   return cartItems?.length > 0 ? (
     <div>
-      <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-8">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
         <div className="p-4 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-semibold mb-4">
             Order Summary
@@ -72,7 +65,7 @@ function CartItems() {
               >
                 <div className="flex-1">
                   <h3 className="text-lg font-medium">{item.title}</h3>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-black text-sm">
                     ${item.price.toFixed(2)} x {item.quantity}
                   </p>
                 </div>
@@ -83,7 +76,7 @@ function CartItems() {
             ))}
           </div>
         </div>
-        <div className="bg-gray-700 p-4 sm:p-6">
+        <div className="bg-white p-4 sm:p-6">
           <div className="flex justify-between items-center">
             <p className="text-xl font-bold">Grand Total</p>
             <p className="text-2xl font-extrabold">${grandTotal.toFixed(2)}</p>
@@ -91,24 +84,14 @@ function CartItems() {
         </div>
       </div>
 
-      <div className="bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
-        {/* <h2 className="text-xl sm:text-2xl font-semibold mb-4">Payment Details</h2> */}
-        {/* Add your payment form here */}
-        <Button
-          className="w-full cursor-pointer h-12 bg-indigo-600 text-white py-3 px-4 rounded-lg text-lg font-semibold hover:bg-indigo-500 transition-colors duration-300 ease-in-out mt-2"
-          disabled={loading}
-          onClick={handleCheckout}
-          variant="classic"
-        >
-          <Spinner loading={loading}></Spinner>
-          Place Order
-        </Button>
-        {/* className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg text-lg font-semibold hover:bg-indigo-500 transition-colors duration-300 ease-in-out mt-6"
-                    onClick={handleCheckout}
-                >
-                    Place Order
-                </button> */}
-      </div>
+      <Button
+        className="w-full bg-blue-900 text-white rounded-lg p-2 hover:bg-blue-800"
+        disabled={loading}
+        onClick={handleCheckout}
+      >
+        <Spinner loading={loading}></Spinner>
+        Place Order
+      </Button>
     </div>
   ) : (
     <div>

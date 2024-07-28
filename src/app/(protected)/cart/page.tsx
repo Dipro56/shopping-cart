@@ -5,13 +5,14 @@ import {
   getUserCartData,
   incrementQuantity,
   removeFromCart,
-} from '@/lib/slices/cartSlice';
-import { RootState } from '@/lib/store';
+} from '@/redux/features/cart/cartSlice';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+
 
 function Page() {
   const router = useRouter();
@@ -63,11 +64,17 @@ function Page() {
                 <thead>
                   <tr className="border-b border-gray-300">
                     <th className="py-3 px-4 text-left text-blue-900">Image</th>
-                    <th className="py-3 px-4 text-left text-blue-900">Product</th>
+                    <th className="py-3 px-4 text-left text-blue-900">
+                      Product
+                    </th>
                     <th className="py-3 px-4 text-left text-blue-900">Price</th>
-                    <th className="py-3 px-4 text-left text-blue-900">Quantity</th>
+                    <th className="py-3 px-4 text-left text-blue-900">
+                      Quantity
+                    </th>
                     <th className="py-3 px-4 text-left text-blue-900">Total</th>
-                    <th className="py-3 px-4 text-left text-blue-900">Delete</th>
+                    <th className="py-3 px-4 text-left text-blue-900">
+                      Delete
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -83,7 +90,9 @@ function Page() {
                         />
                       </td>
                       <td className="py-4 px-4 text-gray-900">{item.title}</td>
-                      <td className="py-4 px-4 text-gray-600">${item.price.toFixed(2)}</td>
+                      <td className="py-4 px-4 text-gray-600">
+                        ${item.price.toFixed(2)}
+                      </td>
                       <td className="py-4 px-4">
                         <div className="flex items-center space-x-2">
                           <button
@@ -94,7 +103,9 @@ function Page() {
                           >
                             <FiMinus />
                           </button>
-                          <span className="text-lg font-medium">{item.quantity}</span>
+                          <span className="text-lg font-medium">
+                            {item.quantity}
+                          </span>
                           <button
                             onClick={() =>
                               handleIncrementQuantity(item.id, item.userId)

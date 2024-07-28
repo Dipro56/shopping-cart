@@ -1,6 +1,4 @@
 'use client';
-import { debounce, debounceRouterPush } from '@/configs/globalFunctions';
-import { useThrottle } from '@/hooks/useThrottle';
 import { Flex, Select, Text } from '@radix-ui/themes';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback } from 'react';

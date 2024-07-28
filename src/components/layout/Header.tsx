@@ -42,7 +42,7 @@ function Header() {
 
   const throttledSearch = useThrottle((query: string) => {
     const url = order
-      ? `/search?product_name=${query}&sortBy="title"&order=${order}`
+      ? `/search?product_name=${query}&order=${order}`
       : `/search?product_name=${query}`;
     router.push(url);
   }, 300);

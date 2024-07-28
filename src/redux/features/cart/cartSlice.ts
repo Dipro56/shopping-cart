@@ -2,20 +2,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import notifications from '@/lib/notification';
 
-interface CartItem {
-  id: number;
-  title: string;
-  price: number;
-  quantity: number;
-  userId: number;
-  thumbnail: string;
-  stock: number;
-}
-
-interface CartState {
-  items: CartItem[];
-}
-
 const initialState: CartState = {
   items: [],
 };

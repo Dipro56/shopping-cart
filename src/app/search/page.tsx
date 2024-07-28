@@ -1,48 +1,57 @@
 'use client';
 import ProductCard from '@/components/products/ProductCard';
-import { debounce } from '@/configs/globalFunctions';
-import { useThrottle } from '@/hooks/useThrottle';
-import apiServices from '@/services/apiServices';
+import ProductSkeleton from '@/components/skeleton/ProductSkeleton';
+import useLoader from '@/hooks/useLoader';
+import { useSearchedProductsQuery } from '@/redux/api/search/searchApiSlice';
 import { Grid } from '@radix-ui/themes';
 import { useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 function Page() {
   const searchParams = useSearchParams();
-  const productName = searchParams.get('product_name');
-  const order = searchParams.get('order');
+  const productName = searchParams.get('product_name') || '';
+  const order = searchParams.get('order') || '';
+  // const { isLoading, handleStartLoading, handleStopLoading } = useLoader();
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const {
+    data: products,
+    isLoading: isFetching,
+    isError,
+  } = useSearchedProductsQuery({
+    query: productName,
+    order: order,
+  });
 
-  let getSearchedProduct = async () => {
-    let res = await apiServices.searchedProducts(productName, order);
-    if (res?.products?.length > 0) {
-      setProducts(res.products);
-    } else {
-      setProducts([]);
-    }
-  };
-
-  const throttledSearchAPI = useThrottle(getSearchedProduct, 500);
-
-  useEffect(() => {
-    throttledSearchAPI();
-  }, [productName, order]);
+  if (isError) {
+    return <p>There was an error fetching products.</p>;
+  }
 
   return (
     <main className="min-h-screen px-0 xl:px-24">
       <Grid
+        className="gap-2"
         columns={{ xs: '2', sm: '3', md: '5' }}
-        px="6"
-        gap="5"
+        gap="4"
         mt="5"
         rows="auto"
         width="auto"
       >
-        {products?.length > 0 ? (
-          products.map((item) => <ProductCard key={item.id} product={item} />)
+        {isFetching ? (
+          <>
+            {[...Array(15)].map((_, i) => (
+              <ProductSkeleton key={i} />
+            ))}
+          </>
         ) : (
-          <p>No products found.</p>
+          <>
+            {products?.products?.length > 0 ? (
+              products?.products.map((item: Product) => (
+                <ProductCard key={item.id} product={item} />
+              ))
+            ) : (
+              <p>No products found.</p>
+            )}
+          </>
         )}
       </Grid>
     </main>

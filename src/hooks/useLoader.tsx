@@ -2,12 +2,19 @@ import React, { useState } from 'react';
 
 const useLoader = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const handleLoading = () => {
-    setIsLoading(!isLoading);
+
+
+  const handleStartLoading = () => {
+    setIsLoading(true);
+  };
+
+  const handleStopLoading = () => {
+    setIsLoading(false);
   };
   return {
     isLoading,
-    handleLoading,
+    handleStartLoading,
+    handleStopLoading
   };
 };
 

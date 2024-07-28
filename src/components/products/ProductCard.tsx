@@ -1,7 +1,5 @@
 'use client';
 import { useUser } from '@/hooks/useUsers';
-import notifications from '@/lib/notification';
-import { addToCart } from '@/lib/slices/cartSlice';
 import { AppDispatch } from '@/lib/store';
 import Image from 'next/image';
 import React, { useState } from 'react';
@@ -12,6 +10,12 @@ import { CiShoppingCart } from 'react-icons/ci';
 import { IoMdStar } from 'react-icons/io';
 import Link from 'next/link';
 import { RootState } from '@/lib/store';
+import {
+  handleProductAddToCart,
+  handleProductDecrement,
+  handleProductIncrement,
+} from '@/utils/helper/productHelper';
+import { addToCart } from '@/redux/features/cart/cartSlice';
 
 interface ProductCardProps {
   product: Product;
@@ -27,70 +31,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     product.price * (1 - product.discountPercentage / 100);
   const totalPrice = discountedPrice * quantity;
 
-  const incrementQuantity = () => {
-    const cartItem = cartItems.filter((item) => item?.id == product.id);
-    console.log('cartItem', cartItem);
-    console.log('product', product);
-    if (cartItem?.length) {
-      console.log('check', cartItem[0]?.quantity + quantity);
-      if (cartItem[0]?.quantity + quantity < product.stock) {
-        setQuantity(quantity + 1);
-      } else {
-        notifications.error('Stock out!');
-      }
-    } else {
-      console.log('else');
-      if (quantity < product.stock) {
-        setQuantity(quantity + 1);
-      } else {
-        notifications.error('Stock out!');
-      }
-    }
-  };
-
-  const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-
-  const handleAddToCart = () => {
-    if (user) {
-      const cartItem = cartItems.filter((item) => item?.id == product.id);
-
-      if (cartItem?.length) {
-        if (cartItem[0]?.quantity + quantity <= product.stock) {
-          dispatch(
-            addToCart({
-              id: product.id,
-              title: product.title,
-              price: discountedPrice,
-              quantity: quantity,
-              thumbnail: product.thumbnail,
-              userId: user.id,
-              stock: product.stock,
-            })
-          );
-          notifications.success('Product added successfully');
-        }
-      } else {
-        dispatch(
-          addToCart({
-            id: product.id,
-            title: product.title,
-            price: discountedPrice,
-            quantity: quantity,
-            thumbnail: product.thumbnail,
-            userId: user.id,
-            stock: product.stock,
-          })
-        );
-      }
-    } else {
-      notifications.error('Please login to add to cart');
-    }
-    console.log(`Added ${quantity} of ${product.title} to cart.`);
-  };
   return (
     <div className="bg-slate-50 text-black rounded-lg shadow-xl overflow-hidden transform  transition-transform duration-200 flex flex-col justify-between p-2">
       <Link href={`product-details/${product?.id}`}>
@@ -155,7 +95,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center space-x-2">
             <button
-              onClick={decrementQuantity}
+              onClick={() => {
+                handleProductDecrement(quantity, setQuantity);
+              }}
               className="p-1 bg-blue-900 hover:bg-blue-700 text-white rounded-full  transition duration-200"
               aria-label="Decrement quantity"
             >
@@ -163,7 +105,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </button>
             <span className="text-base font-bold">{quantity}</span>
             <button
-              onClick={incrementQuantity}
+              onClick={() => {
+                handleProductIncrement(
+                  cartItems,
+                  product,
+                  quantity,
+                  setQuantity
+                );
+              }}
               className="p-1 bg-blue-900 hover:bg-blue-700 text-white rounded-full transition duration-200"
               aria-label="Increment quantity"
             >
@@ -177,7 +126,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         </div>
         <button
-          onClick={handleAddToCart}
+          onClick={() => {
+            handleProductAddToCart(
+              user,
+              cartItems,
+              product,
+              quantity,
+              discountedPrice,
+              dispatch,
+              addToCart
+            );
+          }}
           className="w-full bg-blue-900 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex justify-center items-center"
         >
           <CiShoppingCart className="text-lg" />

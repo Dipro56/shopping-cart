@@ -1,28 +1,32 @@
 // hooks/useCurrentUser.ts
-import { useGetCurrentUserQuery } from '@/lib/slices/userApiSlice'
-import { useState, useEffect, useCallback } from 'react'
-
+import { useGetCurrentUserQuery } from '@/redux/api/user/userApiSlice';
+import { useState, useEffect, useCallback } from 'react';
 
 export function useUser() {
-    const [user, setUser] = useState<User | null>(null)
-    const { data, error, isLoading, refetch } = useGetCurrentUserQuery(undefined, {
-        refetchOnMountOrArgChange: true, // This will refetch when the component mounts or query args change
-    })
+  const [user, setUser] = useState<User | null>(null);
+    const { data, error, isLoading, refetch } = useGetCurrentUserQuery();
 
-    // console.log('error', error)
+  // const { data, error, isLoading, refetch } = useGetCurrentUserQuery(
+  //   undefined,
+  //   {
+  //     refetchOnMountOrArgChange: true, // This will refetch when the component mounts or query args change
+  //   }
+  // );
 
-    useEffect(() => {
-        if (data) {
-            setUser(data)
-        } else {
-            // console.log("error", error)
-        }
-    }, [data])
+  // console.log('error', error)
 
-    // Revalidate function
-    const revalidate = useCallback(() => {
-        refetch()
-    }, [refetch])
+  useEffect(() => {
+    if (data) {
+      setUser(data);
+    } else {
+      // console.log("error", error)
+    }
+  }, [data]);
 
-    return { user, error, isLoading, revalidate }
+  // Revalidate function
+  const revalidate = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  return { user, error, isLoading, revalidate };
 }

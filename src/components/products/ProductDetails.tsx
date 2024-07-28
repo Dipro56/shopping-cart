@@ -1,17 +1,19 @@
 'use client';
-import productService from '@/services/productService';
-import Image from 'next/image';
 import React, { useState } from 'react';
 import { IoMdStar } from 'react-icons/io';
 import { FiMinus, FiPlus } from 'react-icons/fi';
 import { CiShoppingCart } from 'react-icons/ci';
-import { FaUserCircle } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '@/lib/store';
 import { useUser } from '@/hooks/useUsers';
-import notifications from '@/lib/notification';
-import { addToCart } from '@/lib/slices/cartSlice';
-import { RootState } from '@/lib/store';
+
+import {
+  handleProductAddToCart,
+  handleProductDecrement,
+  handleProductIncrement,
+} from '@/utils/helper/productHelper';
+import { addToCart } from '@/redux/features/cart/cartSlice';
+import { RootState } from '../../redux/store';
 
 interface ProductCardProps {
   productDetails: Product;
@@ -26,73 +28,6 @@ const ProductDetails: React.FC<ProductCardProps> = ({ productDetails }) => {
   const discountedPrice =
     productDetails?.price * (1 - productDetails?.discountPercentage / 100);
   const totalPrice = discountedPrice * quantity;
-
-  const incrementQuantity = () => {
-    const cartItem = cartItems.filter((item) => item?.id == productDetails.id);
-    console.log('cartItem', cartItem);
-    console.log('product', productDetails);
-    if (cartItem?.length) {
-      console.log('check', cartItem[0]?.quantity + quantity);
-      if (cartItem[0]?.quantity + quantity < productDetails.stock) {
-        setQuantity(quantity + 1);
-      } else {
-        notifications.error('Stock out!');
-      }
-    } else {
-      console.log('else');
-      if (quantity < productDetails.stock) {
-        setQuantity(quantity + 1);
-      } else {
-        notifications.error('Stock out!');
-      }
-    }
-  };
-
-  const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-
-  const handleAddToCart = () => {
-    if (user) {
-      const cartItem = cartItems.filter(
-        (item) => item?.id == productDetails.id
-      );
-
-      if (cartItem?.length) {
-        if (cartItem[0]?.quantity + quantity <= productDetails.stock) {
-          dispatch(
-            addToCart({
-              id: productDetails.id,
-              title: productDetails.title,
-              price: discountedPrice,
-              quantity: quantity,
-              thumbnail: productDetails.thumbnail,
-              userId: user.id,
-              stock: productDetails.stock,
-            })
-          );
-          notifications.success('Product added successfully');
-        }
-      } else {
-        dispatch(
-          addToCart({
-            id: productDetails.id,
-            title: productDetails.title,
-            price: discountedPrice,
-            quantity: quantity,
-            thumbnail: productDetails.thumbnail,
-            userId: user.id,
-            stock: productDetails.stock,
-          })
-        );
-      }
-    } else {
-      notifications.error('Please login to add to cart');
-    }
-    console.log(`Added ${quantity} of ${productDetails.title} to cart.`);
-  };
 
   return (
     <div className="my-4 w-full">
@@ -146,21 +81,29 @@ const ProductDetails: React.FC<ProductCardProps> = ({ productDetails }) => {
         )}
       </div>
       <h1 className="text-sm font-semibold text-red-600">
-        Minimum order : {productDetails?.minimumOrderQuantity}
+        Total stock : {productDetails?.stock}
       </h1>
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center space-x-2">
           <button
-            onClick={decrementQuantity}
+            onClick={() => {
+              handleProductDecrement(quantity, setQuantity);
+            }}
             className="p-1 bg-blue-900 hover:bg-blue-700 text-white rounded-full  transition duration-200"
             aria-label="Decrement quantity"
           >
             <FiMinus />
           </button>
           <span className="text-base font-bold">{quantity}</span>
-          {/* <span className="text-base font-bold">{quantity}</span> */}
           <button
-            onClick={incrementQuantity}
+            onClick={() => {
+              handleProductIncrement(
+                cartItems,
+                productDetails,
+                quantity,
+                setQuantity
+              );
+            }}
             className="p-1 my-3 bg-blue-900 hover:bg-blue-700 text-white rounded-full transition duration-200"
             aria-label="Increment quantity"
           >
@@ -174,7 +117,17 @@ const ProductDetails: React.FC<ProductCardProps> = ({ productDetails }) => {
         </div>
       </div>
       <button
-        onClick={handleAddToCart}
+        onClick={() => {
+          handleProductAddToCart(
+            user,
+            cartItems,
+            productDetails,
+            quantity,
+            discountedPrice,
+            dispatch,
+            addToCart
+          );
+        }}
         className="w-full bg-blue-900 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex justify-center items-center"
       >
         <CiShoppingCart className="text-lg" />

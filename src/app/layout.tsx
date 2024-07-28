@@ -6,11 +6,11 @@ import MainLayout from '../components/layout/MainLayout';
 import { Theme } from '@radix-ui/themes';
 import { Toaster } from 'react-hot-toast';
 import { notificationOption } from '../lib/notification';
-import StoreProvider from '@/lib/StoreProvider';
+import StoreProvider from '@/redux/StoreProvider';
 // import { Providers } from "./providers";
 
 const poppins = Poppins({
-  subsets:['latin'],
+  subsets: ['latin'],
   weight: ['400'],
 });
 export const metadata: Metadata = {

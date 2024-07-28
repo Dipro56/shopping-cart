@@ -1,40 +1,37 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { startTransition, useEffect, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import { Button, Flex } from '@radix-ui/themes';
-import { SiLootcrate } from 'react-icons/si';
-import apiServices from '@/services/apiServices';
 import notifications from '@/lib/notification';
 import { setCookie } from 'typescript-cookie';
 import { useUser } from '@/hooks/useUsers';
 import useLoader from '@/hooks/useLoader';
 import InputField from '@/components/utils/InputField';
+import authService from '@/services/authService';
 
 function Login() {
   let { revalidate, user } = useUser();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  //const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const { isLoading, handleLoading } = useLoader();
+  const { isLoading, handleStartLoading, handleStopLoading } = useLoader();
 
   const handleLogin = async () => {
     if (username && password) {
-      handleLoading();
-      let res = await apiServices.login(username, password);
+      handleStartLoading();
+      let res = await authService.login(username, password);
       if (res?.message === 'Invalid credentials') {
         notifications.error(res.message);
-        handleLoading();
+        handleStopLoading();
         return;
       } else {
         notifications.success('Logged in successfully');
         setCookie('sct', res?.token);
         setCookie('rsct', res?.refreshToken);
         revalidate();
+        handleStopLoading();
         return;
       }
     } else {
@@ -44,7 +41,7 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      handleLoading();
+      handleStopLoading();
       startTransition(() => {
         router.push('/');
         router.refresh();
