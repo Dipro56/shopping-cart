@@ -1,9 +1,11 @@
-import productService from '@/services/productService';
-import Image from 'next/image';
-import React  from 'react';
-import { IoMdStar } from 'react-icons/io';
-import { FaUserCircle } from 'react-icons/fa';
-import ProductDetails from '@/components/products/ProductDetails';
+import productService from "@/services/productService";
+import Image from "next/image";
+import React from "react";
+import { IoMdStar } from "react-icons/io";
+import { FaUserCircle } from "react-icons/fa";
+import ProductDetails from "@/components/products/ProductDetails";
+import ProductReview from "@/components/products/ProductReview";
+
 
 interface Context {
   params: any;
@@ -18,9 +20,7 @@ const getSingleProductDetails = async (context: Context) => {
 
 const ProductDetailsPage = async (param: Context) => {
   let { productDetails } = await getSingleProductDetails(param);
-  const discountedPrice =
-    productDetails?.price * (1 - productDetails?.discountPercentage / 100);
-  const totalPrice = discountedPrice * productDetails?.quantity;
+
   return (
     <main>
       <hr />
@@ -42,30 +42,7 @@ const ProductDetailsPage = async (param: Context) => {
             {productDetails?.reviews?.map((item: Review) => {
               return (
                 <>
-                  <div className="my-1">
-                    <div className="flex justify-start sm:justify-between items-center">
-                      <div className="flex items-center">
-                        <FaUserCircle size={40} className="text-gray-600" />
-                        <div className="mx-2">
-                          <h1 className="font-semibold text-sm mb-0">
-                            {item?.reviewerName}
-                          </h1>
-                          <h1 className="text-xs text-gray-600">
-                            {item?.reviewerEmail}
-                          </h1>
-                        </div>
-                      </div>
-                      <div className="hidden sm:flex">
-                        {[...Array(item.rating)].map((_, i) => (
-                          <IoMdStar
-                            key={i}
-                            className={`h-5 w-5 text-yellow-400`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <h1 className="ml-12 text-sm">{item?.comment}</h1>
-                  </div>
+                <ProductReview review ={item}/>
                 </>
               );
             })}
