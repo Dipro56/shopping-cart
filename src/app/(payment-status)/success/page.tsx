@@ -16,7 +16,7 @@ const SuccessPage: React.FC = () => {
 
   const router = useRouter();
   const session_id = searchParams.get('session_id');
-  // console.log("session_id",session_id)
+
   useEffect(() => {
     console.log('session_id', session_id, user);
     if (session_id && user?.id) {

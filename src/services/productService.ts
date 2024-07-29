@@ -9,7 +9,7 @@ const productService: ProductService = {
   getAllProduct: async () => {
     try {
       let url = `${process.env.BASE_API}/products?limit=200`;
-      console.log(url);
+  
       let response = await fetch(url)
         .then((response) => response.json())
         .catch((error) => error);

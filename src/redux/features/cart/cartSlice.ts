@@ -27,14 +27,12 @@ const cartSlice = createSlice({
       state,
       action: PayloadAction<{ productId: number; userId: number }>
     ) => {
-      console.log('incrementQuantity');
       const item = state.items.find(
         (item) =>
           item.id === action.payload.productId &&
           item.userId === action.payload.userId
       );
-      console.log('item', item, state);
-      debugger;
+
       if (item) {
         if (item.quantity < item?.stock) {
           item.quantity += 1;
