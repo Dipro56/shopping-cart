@@ -1,6 +1,6 @@
 import notifications from '@/lib/notification';
 import { findCartItem, isStockAvailable } from './cartHelper';
-import { AppDispatch } from '../../lib/store';
+import { AppDispatch } from '../../redux/store';
 
 export const handleProductIncrement = (
   cartItems: CartItem[],
